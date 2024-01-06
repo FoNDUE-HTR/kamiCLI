@@ -1,7 +1,6 @@
 data_test/
 *.xml
 output/
-*.txt
 *.mlmodel
 venv/
 __pycache__/

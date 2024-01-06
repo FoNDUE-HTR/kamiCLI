@@ -1,0 +1,5 @@
+click==8.1.7
+kamilib==0.1.13
+pandas
+rich
+SciPy==1.10.1
