@@ -31,7 +31,7 @@ def get_workers() -> int:
 
     # Check if the result is greater than 3
     if cpu_cores > 3:
-        logging.info(
+        logging.warning(
             f"Using {str(cpu_cores)} workers for kraken engine", exc_info=True)
         return cpu_cores
     elif os.cpu_count() < 3:
@@ -40,6 +40,6 @@ def get_workers() -> int:
         click.echo(
                 f"CPU not powerful enough, you need at least 3 cores to run kraken engine.")
     else:
-        logging.info(
+        logging.warning(
             f"Using 3 workers for kraken engine", exc_info=True)
         return 3

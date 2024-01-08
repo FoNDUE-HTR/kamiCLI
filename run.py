@@ -37,7 +37,7 @@ def test_model(model, **kwargs):
 
     # Output path
     if not os.path.exists(output_path):
-        logging.info(
+        logging.warning(
             f"Dir creation output_path: {str(model_path)}", exc_info=True)
         if kwargs['verbose']:
             click.echo(f"An error has occurred : the HTR model can be found along the following path : {str(model_path)}")
@@ -69,7 +69,6 @@ def test_model(model, **kwargs):
     list_files = parsing_xml(kwargs['datadir'])
     with Progress() as progress:
         task = progress.add_task("[cyan]Processing files...", total=len(list_files))
-        task_2 = progress.add_task("[red]Saving dataframe...", total=len(dict_df))
 
         for n, (xml_path, image_path) in enumerate(list_files):
             try:
@@ -92,7 +91,11 @@ def test_model(model, **kwargs):
                 # build df on score board :
                 # 'all_transforms', 'default', 'remove_diacritics', 'remove_punctuation', 'lowercase', 'non_digits', 'uppercase'
                 for k in result:
-                    ordered_dict = OrderedDict([('filename', filename)] + list(result[k].items()))
+                    try:
+                        ordered_dict = OrderedDict([('filename', filename)] + list(result[k].items()))
+                    except AttributeError:
+                        # excepting firsts data
+                        pass
                     try:
                         if dict_df[k] is None:
                             dict_df[k] = pd.DataFrame.from_dict([ordered_dict])
@@ -110,19 +113,20 @@ def test_model(model, **kwargs):
                 pass
             progress.update(task, advance=1)
 
-    # metadata
-    metadatas = {}
+        # metadata
+        metadatas = {}
 
-    now = datetime.now()
-    metadatas['DATETIME'] = now.strftime("%d_%m_%Y_%H:%M")
-    metadatas['MODEL'] = os.path.basename(model_path).split('.')[0]
+        now = datetime.now()
+        metadatas['DATETIME'] = now.strftime("%d_%m_%Y_%H:%M")
+        metadatas['MODEL'] = os.path.basename(model_path).split('.')[0]
 
-    for k, df in dict_df.items():
-        metadatas['TRANSFORM'] = k
-        name_csv = f"evaluation_report_kami_{metadatas['DATETIME']}_{metadatas['MODEL']}_{metadatas['TRANSFORM']}.csv"
-        if df is not None:
-            df.to_csv(os.path.join(output_path, name_csv), mode='w+', header=True)
-        progress.update(task_2, advance=1)
+        task_2 = progress.add_task("[red]Saving dataframe...", total=len(dict_df))
+        for k, df in dict_df.items():
+            metadatas['TRANSFORM'] = k
+            name_csv = f"evaluation_report_kami_{metadatas['DATETIME']}_{metadatas['MODEL']}_{metadatas['TRANSFORM']}.csv"
+            if df is not None:
+                df.to_csv(os.path.join(output_path, name_csv), mode='w+', header=True)
+            progress.update(task_2, advance=1)
 
 
 if __name__ == '__main__':
