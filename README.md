@@ -20,4 +20,5 @@ There are a number of options for refining the results to suit your needs.
 
 ## Troubleshooting
 
-If you get a similar error: "[ERROR] Prediction with Kraken failed: 'Delaunay' object has no attribute 'vertices'" you simply need to install an earlier version of Scipy `pip install SciPy==1.10.1` (issue [#525](https://github.com/mittagessen/kraken/issues/525)).
+>[!WARNING] 
+>If you get a similar error: "[ERROR] Prediction with Kraken failed: 'Delaunay' object has no attribute 'vertices'" you simply need to install an earlier version of Scipy `pip install SciPy==1.10.1` (issue [#525](https://github.com/mittagessen/kraken/issues/525)).
